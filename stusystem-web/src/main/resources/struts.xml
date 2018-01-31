@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+	
+	<!-- 设置系统参数 -->
+	<constant name="struts.devMode" value="true"/>
+	<constant name="struts.action.extension" value="action,do,,"/>
+	<!-- 设置struts UI主题风格 -->
+	<constant name="struts.ui.theme" value="simple"/>
+	<!-- 设置Action -->
+	<package name="mytest" extends="json-default">
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<interceptor name="loginInterceptor" class="com.interceptor.LoginInterceptor"/>
+			<interceptor-stack name="myLoginStack">
+				<interceptor-ref name="loginInterceptor">
+					<param name="excludeMethods">doLogin,doRegister</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+
+		<global-results>
+			<result name="login">/loginUser.jsp</result>
+		</global-results>
+
+		<global-allowed-methods>regex:.*</global-allowed-methods>
+
+		<action name="userAction_*" method="{1}" class="userAction">
+			<result name="input">/loginUser.jsp</result>
+			<result name="main">/index.jsp</result>
+			<interceptor-ref name="myLoginStack"/>
+		</action>
+
+			<action name="clsAction_*" method="{1}" class="clsAction">
+				<result name="addClass" type="redirect">/addClass.jsp</result>
+				<result name="clsList" type="json">
+					<param name="includeProperties">clsList.*</param>
+				</result>
+				<interceptor-ref name="myLoginStack"/>
+			</action>
+
+		<action name="stuAction_*" method="{1}" class="stuAction">
+			<result name="addStu">/addStu.jsp</result>
+			<result name="toAddStu" type="redirectAction">stuAction_toAddStu?message=${message}</result>
+			<result name="stuList">/stuList.jsp</result>
+			<result name="toupDate">upDateStu.jsp</result>
+			<result name="doupDate">/index.jsp</result>
+			<interceptor-ref name="myLoginStack"/>
+		</action>
+
+
+		<action name="postAction_*" method="{1}" class="postAction">
+			<result name="doAddPost" type="redirect">/addPost.jsp</result>
+			<result name="postList" type="json">
+				<param name="includeProperties">postList.*</param>
+			</result>
+		</action>
+		<action name="teacherAction_*" method="{1}" class="teacherAction">
+			<result name="toAddTeacher">/addTeacher.jsp</result>
+			<result name="doAddTeacher" type="redirectAction">teacherAction_toAddTeacher</result>
+			<result name="teacherList">/teacherList.jsp</result>
+			<result name="toUpdateTeacher">/updateTeacher.jsp</result>
+			<result name="doUpdateTeacher" type="redirectAction">teacherAction_findTeacherList</result>
+		</action>
+	</package>
+</struts>
+
+
+
+
+
